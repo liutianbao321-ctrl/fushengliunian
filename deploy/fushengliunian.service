@@ -1,0 +1,27 @@
+[Unit]
+Description=Fushengliunian API and durable workers
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/fushengliunian/backend
+EnvironmentFile=/etc/fushengliunian/backend.env
+Environment=GENERATION_WORKER_ENABLED=true
+Environment=INDEX_WORKER_ENABLED=true
+Environment=OUTBOX_WORKER_ENABLED=true
+Environment=MALLOC_ARENA_MAX=2
+ExecStart=/opt/fushengliunian-runtime/venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8100 --workers 1 --limit-concurrency 64
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+MemoryHigh=300M
+MemoryMax=480M
+
+[Install]
+WantedBy=multi-user.target

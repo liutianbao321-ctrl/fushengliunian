@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>浮生流年 · 通用 AI 长篇小说创作系统 · 流程设计 v2</title>
+<style>
+  :root{
+    --ink:#1a1a2e; --sub:#5a5a72; --line:#e3e3ee; --bg:#f7f7fb;
+    --accent:#4a56d6; --accent2:#0ea5a4; --warn:#e0703a; --pink:#d6457f;
+    --card:#ffffff; --soft:#eef0ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;padding:32px 20px 80px}
+  .wrap{max-width:1060px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:1px}
+  h2{font-size:21px;margin:56px 0 6px;padding-left:12px;border-left:5px solid var(--accent)}
+  h3{font-size:16.5px;margin:26px 0 8px;color:var(--accent)}
+  h4{font-size:15px;margin:16px 0 6px}
+  p.lead{color:var(--sub);margin:4px 0 14px;font-size:14px}
+  .meta{color:var(--sub);font-size:13px;margin-top:6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:820px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  .tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;margin:1px 3px 1px 0;border:1px solid var(--line)}
+  .t-blue{background:#eef0ff;color:#3d47b8;border-color:#c9d0f5}
+  .t-green{background:#e6f7f6;color:#0b7c7a;border-color:#b5e5e2}
+  .t-orange{background:#fdf0e6;color:#b95420;border-color:#f4d3b8}
+  .t-pink{background:#fce8f1;color:#b03066;border-color:#f2c2d8}
+  .t-gray{background:#f1f1f5;color:#555}
+  /* 流程图 */
+  .flow{display:flex;flex-direction:column;align-items:stretch;gap:0}
+  .step{display:flex;gap:14px}
+  .step .rail{display:flex;flex-direction:column;align-items:center;width:34px;flex:none}
+  .step .dot{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none}
+  .step .bar{width:3px;flex:1;background:linear-gradient(var(--accent),#c9d0f5);min-height:14px}
+  .step:last-child .bar{display:none}
+  .step .body{flex:1;padding-bottom:22px}
+  .step .body .ttl{font-weight:700;font-size:15.5px}
+  .step .body .sub{color:var(--sub);font-size:13px}
+  .mini{font-size:12.5px;color:var(--sub)}
+  .box{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;font-size:13.5px}
+  .box b{color:var(--accent)}
+  .hl{background:linear-gradient(transparent 62%,#ffe9a8 62%)}
+  .loop{border:2px dashed var(--accent2);border-radius:14px;padding:14px 16px;margin:12px 0;background:#f3fbfa}
+  .loop .cap{font-weight:700;color:var(--accent2);font-size:14px}
+  .arrow{text-align:center;color:var(--accent);font-size:20px;line-height:1}
+  .kv{display:grid;grid-template-columns:130px 1fr;gap:4px 12px;font-size:13.5px}
+  .kv dt{color:var(--sub)}
+  .kv dd{margin:0}
+  .pill-row{margin:6px 0}
+  .principle{display:flex;gap:12px;align-items:flex-start}
+  .principle .ic{font-size:20px;flex:none;width:38px;height:38px;border-radius:10px;background:var(--soft);display:flex;align-items:center;justify-content:center}
+  .principle b{display:block;font-size:14.5px}
+  .principle span{font-size:13px;color:var(--sub)}
+  .note{background:#fff9ec;border:1px solid #f4ddb0;border-radius:10px;padding:10px 14px;font-size:13px;color:#7a5a17;margin:10px 0}
+  .lane{border-left:4px solid var(--pink);padding:2px 0 2px 14px;margin:10px 0}
+  .lane.b{border-left-color:var(--accent2)}
+  .lane.c{border-left-color:var(--warn)}
+  .lane.d{border-left-color:var(--accent)}
+  code{background:#eef0ff;border-radius:5px;padding:1px 6px;font-size:12.5px;color:#3d47b8;font-family:ui-monospace,Menlo,monospace}
+  .small{font-size:12.5px}
+  ul.tight li{margin:3px 0;font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>浮生流年 · 通用 AI 长篇小说创作系统 · 流程设计 v2</h1>
+<div class="meta">设计依据：9 部不同赛道长篇的结构拆解（男频玄幻/仙侠/武侠/历史/电竞/悬疑 + 女频宫斗）× 现有系统资产盘点　·　2026-07-22</div>
+
+<!-- ==================== 0. 总览 ==================== -->
+<h2>0. 一句话方案</h2>
+<div class="card">
+  <p style="font-size:15px">
+    把系统拆成<b>「类型无关的创作内核」</b>+<b>「可插拔的赛道模板包」</b>两层。
+    内核只负责所有长篇小说共有的东西：<span class="hl">四级大纲树、副线注册表、伏笔生命周期、人物状态账本、章末钩子、卷末再规划循环</span>；
+    类型差异（升级流还是宫斗、甜宠还是悬疑）全部变成模板包里的<b>参数</b>——节奏配比、爽点引擎、卷数区间、人物规模、钩子配方。
+    用户全程<b>做选择题和微调</b>，AI 负责生成和兜底；两条业务流水线（<b>原创</b>、<b>衍生：仿写/续写/同人</b>）共用同一套内核。
+  </p>
+</div>
+
+<!-- ==================== 1. 设计原则 ==================== -->
+<h2>1. 五条设计原则</h2>
+<p class="lead">原则 1-3 回应"傻子也能写几百万字、还要符合自己心意、还要符合市场"；原则 4-5 是研究 9 本书后确认的通用结构规律。</p>
+<div class="grid2">
+  <div class="card principle"><div class="ic">🧭</div><div><b>选择题优先，填空题兜底</b><span>任何环节用户都可以只说"就这个"/"换一批"。所有 AI 产出默认给 3 个候选 + 1 个"我来说说我的想法"自由输入。用户的心意通过"选择+点改"表达，而不是写小作文。</span></div></div>
+  <div class="card principle"><div class="ic">🧅</div><div><b>渐进披露，分层下钻</b><span>用户永远只面对当前一层：先定全书（10 分钟），再定第一卷（5 分钟），然后逐章推进。写 30 万字和写 600 万字走同一个流程，只是系统按目标字数自动调整层级参数。</span></div></div>
+  <div class="card principle"><div class="ic">📈</div><div><b>市场对齐前置</b><span>"写什么"阶段就接入赛道热度/公式/标杆作品（现有 /market 与 taste-match 能力），而不是写完再验。读者口味校验贯穿规划期（读者团模拟）与连载期（反馈回流）。</span></div></div>
+  <div class="card principle"><div class="ic">🌳</div><div><b>规划即数据，数据即上下文</b><span>所有规划产物（卷纲/弧纲/章纲/人物/伏笔）都是结构化数据，生成时自动组装成"创作简报"喂给模型。人看到的树和 AI 看到的上下文是同一份真相。</span></div></div>
+  <div class="card principle"><div class="ic">🔁</div><div><b>滚动规划，不一次画死</b><span>9 本书共同规律：长篇是"规划一卷、写一卷、再规划下一卷"滚动完成的。系统核心循环是<b>卷末再规划</b>——每卷结束时用最新的伏笔账本、人物状态、读者反馈重新推演下一卷，允许中途改大纲，伏笔兜底防崩。</span></div></div>
+</div>
+
+<!-- ==================== 2. 通用内核 ==================== -->
+<h2>2. 通用创作内核（类型无关）</h2>
+<p class="lead">这是系统的"操作系统"。它不假设任何类型——宫斗的"扳倒华妃"和玄幻的"夺取异火"在内核眼里是同一种对象：<b>事件弧</b>。</p>
+
+<h3>2.1 四级大纲树（研究结论：所有书都收敛到这个结构）</h3>
+<div class="card">
+  <div class="grid4">
+    <div class="box"><b>① 书</b><br><span class="mini">核心悬念/终极目标、主线升级阶梯（2-4 次升级，如 生存→复仇→守护→天下）、结局承诺、基调</span></div>
+    <div class="box"><b>② 卷</b><br><span class="mini">阶段目标、核心冲突、舞台/势力、本卷"三增量"、开篇/收束钩子、预计章数</span></div>
+    <div class="box"><b>③ 弧</b><br><span class="mini">起因→发展→高潮→收束闭环、涉及人物/伏笔、弧类型、预计 3-30 章</span></div>
+    <div class="box"><b>④ 章</b><br><span class="mini">本章目标、POV、关键事件、信息揭示、章末钩子类型、字数预算</span></div>
+  </div>
+  <div class="note">分卷信号是通用的：<b>舞台切换 / 主线目标升级 / 力量或地位体系跃迁 / 时间大跳跃</b>——宫斗（入宫→甘露寺→回宫）和修仙（越国→乱星海→灵界）用的是同一组信号。</div>
+</div>
+
+<h3>2.2 副线注册表（所有书都有 3-5 条副线，且与主线高交织）</h3>
+<div class="card">
+  <table>
+    <tr><th>副线类型（通用槽位）</th><th>注册字段</th><th>内核提供的自动化</th></tr>
+    <tr><td><span class="tag t-pink">感情线</span><span class="tag t-blue">身世线</span><span class="tag t-green">势力线</span><span class="tag t-orange">伙伴线</span><span class="tag t-gray">自定义</span></td>
+        <td>启动章 / 推进节点列表 / 收束章 / 当前阶段 / 最后更新章 / 与主线交织点</td>
+        <td>① 检测某副线超过 N 章未推进 → 提醒并可自动织入下一弧；② 卷末再规划时输出各副线状态一览；③ 收束章临近时生成收束弧建议</td></tr>
+  </table>
+</div>
+
+<h3>2.3 伏笔生命周期（9 本书共性：核心伏笔跨 300-1000+ 章，埋设必有伪装）</h3>
+<div class="card">
+  <div class="kv">
+    <dt>字段</dt><dd><code>内容</code><code>伪装形态</code><code>重要度 核心/重要/次要</code><code>埋设章</code><code>目标回收窗口</code><code>实际回收章</code><code>状态 活跃/临期/已回收/废弃</code><code>关联人物/弧</code></dd>
+    <dt>内核机制</dt><dd>① <b>临期升级</b>：进入回收窗口未回收 → 自动升级权重，注入后续 5 章的章纲提示；② <b>伪装约束</b>：埋设章生成时校验"是否以伪装形态出现、未泄露真相"；③ <b>炸弹清单</b>：卷末再规划时强制回答"本卷引爆哪个、新埋哪个"</dd>
+  </div>
+</div>
+
+<h3>2.4 人物注册表（支撑 30-200 人、错峰登场、关系逆转）</h3>
+<div class="card">
+  <div class="kv">
+    <dt>静态字段</dt><dd>姓名/代号、阵营（可变）、功能位（导师/宿敌/伙伴/爱人…）、性格标签、核心欲望与恐惧、<b>隐藏秘密</b>（读者与主角分别知道什么）</dd>
+    <dt>动态字段</dt><dd>首次登场章、退场/淡出章、与主角关系及<b>逆转记录</b>（何时何事）、当前状态快照（位置/心态/资源/伤势）、成长轨迹（能力/身份/心态三维）</dd>
+    <dt>内核机制</dt><dd>① 人物弧检查：重要人物超过一卷无变化 → 提醒；② 登场调度：规划卷纲时声明"本卷新登场/退场"，防止人物同时扎堆；③ 关系逆转必须是"事件驱动"（挂在弧上），不允许平白转向</dd>
+  </div>
+</div>
+
+<h3>2.5 章末钩子引擎 + 节奏仪表盘（通用写作层约束）</h3>
+<div class="grid2">
+  <div class="card"><h4>钩子类型库（类型无关）</h4>
+    <span class="tag t-blue">悬念</span><span class="tag t-orange">危机</span><span class="tag t-green">揭秘/反转</span><span class="tag t-pink">情感/决心</span><span class="tag t-gray">新信息</span><span class="tag t-gray">转场</span>
+    <p class="mini" style="margin-top:6px">章纲生成时按赛道模板的目标配比<b>分配</b>钩子类型；同一类型连续出现 ≤2 章，防止节奏钝化。</p>
+  </div>
+  <div class="card"><h4>节奏仪表盘</h4>
+    <p class="mini">按赛道模板监测近 30/50 章的章节类型占比（冲突/推进/日常/揭秘/情感），偏离目标区间 → 提示"接下来 5 章建议补一个冲突弧/一章缓冲日常"；同时追踪距上次大高潮的章数，逼近赛道阈值 → 触发高潮弧规划。</p>
+  </div>
+</div>
+
+<h3>2.6 卷末再规划简报（内核的心脏：9 份报告独立给出同一清单）</h3>
+<div class="loop">
+  <div class="cap">每卷结束（或用户随时手动触发）→ 系统自动生成「再规划简报」→ 据此推演下一卷</div>
+  <div class="grid3" style="margin-top:8px">
+    <div class="box mini">① <b>当前快照</b>：主角能力/身份/心态坐标、位置、资源账本</div>
+    <div class="box mini">② <b>伏笔账本</b>：活跃伏笔按重要度+临期排序</div>
+    <div class="box mini">③ <b>副线状态</b>：各线当前阶段、未推进时长</div>
+    <div class="box mini">④ <b>人物状态</b>：重要人物生死/心态/关系、可用与已下线</div>
+    <div class="box mini">⑤ <b>待办清单</b>：蓝图承诺但未兑现的节点</div>
+    <div class="box mini">⑥ <b>节奏体检</b>：近 50 章配比、距大高潮章数、读者反馈</div>
+  </div>
+  <p class="mini" style="margin-top:6px">下一卷的卷纲由 AI 基于简报生成 3 个候选方向（守成/激进/转向），用户选定后才展开弧纲。<b>这就是"写到几百万字也不裸奔"的机制。</b></p>
+</div>
+
+<!-- ==================== 3. 赛道模板包 ==================== -->
+<h2>3. 赛道模板包（类型差异全部下沉为参数）</h2>
+<p class="lead">模板包 = 一份数据配置，不是代码。新类型 = 新增一个模板（可 AI 生成后人工微调）。这保证系统是<b>通用写作系统</b>而不是"玄幻写作机"。</p>
+<div class="card">
+  <table>
+    <tr><th>模板参数</th><th>说明</th><th>举例（同一参数，不同赛道取值）</th></tr>
+    <tr><td><b>爽点引擎</b></td><td>本书靠什么持续产出看点，写作节点据此自检"本章有没有供给"</td><td>升级碾压 / 揭秘拼图 / 权谋反转 / 甜宠发糖 / 养成见证 / 规则怪谈…</td></tr>
+    <tr><td><b>防疲劳三增量</b></td><td>每卷必须登记的增量项，卷纲缺一则不许通过</td><td>换舞台+换对手层级+换玩法（通用框架，各赛道填自己的内容：宫斗填"对手段位升级"，悬疑填"谜题层级升级"）</td></tr>
+    <tr><td><b>节奏配比</b></td><td>章节类型目标占比 + 大高潮间隔区间</td><td>战斗 40%·日常 15% / 权谋 50%·感情 30% / 日常 60%·甜点 25%…</td></tr>
+    <tr><td><b>钩子配方</b></td><td>章末钩子类型目标分布</td><td>悬疑赛道揭秘钩占比高；甜宠赛道情感钩占比高</td></tr>
+    <tr><td><b>篇幅阶梯</b></td><td>目标字数 → 卷数/弧数/高潮密度 映射表</td><td>80 万字≈4-5 卷；300 万字≈6-8 卷；600 万字≈8-12 卷（见 §6）</td></tr>
+    <tr><td><b>人物规模</b></td><td>预期重要人物数、中后期新登场配额</td><td>群像权谋 80-150 人 / 单线甜宠 15-30 人</td></tr>
+    <tr><td><b>叙事惯例</b></td><td>POV 习惯、时间跳跃惯例、禁忌与红线</td><td>第一人称代入流 / 第三人称群像 / 多 POV 权谋</td></tr>
+    <tr><td><b>文风指纹</b></td><td>句式/视角距离/对话密度/信息释放节奏</td><td>生成时注入 writer 节点；现有 style_profile 升级而来</td></tr>
+  </table>
+  <div class="note">模板来源三路：① 官方预置（对标赛道标杆作品的拆书结论）；② 市场数据驱动（现有 /market 赛道热度+公式）；③ <b>拆书逆向生成</b>——用户导入一本喜欢的书，系统拆出模板供仿写（见 §5）。</div>
+</div>
+
+<!-- ==================== 4. 流程一：原创 ==================== -->
+<h2>4. 流程一 · 原创流水线（傻子模式，全程可选默认）</h2>
+<p class="lead">分两个大阶段：<b>规划期</b>（一次性的全书奠基，约 15-30 分钟，全部可以"听 AI 的"）和 <b>连载期</b>（滚动循环，日常操作只剩"生成→看→确认"）。</p>
+
+<h3>4.A 规划期：六步奠基（继承现有向导骨架，深化第 5-6 步）</h3>
+<div class="flow">
+  <div class="step"><div class="rail"><div class="dot">1</div><div class="bar"></div></div><div class="body">
+    <div class="ttl">定位与赛道 <span class="tag t-green">保留现有</span></div>
+    <div class="sub">频道、目标字数、"我想看什么样的故事"、口味标签 → AI 匹配赛道模板包（现有 taste-match / Track 机制）。</div>
+    <div class="mini">用户决策：选赛道或"AI 综合"。<b>选定即加载对应模板参数</b>——后续所有默认值都有了依据。</div>
+  </div></div>
+  <div class="step"><div class="rail"><div class="dot">2</div><div class="bar"></div></div><div class="body">
+    <div class="ttl">故事种子 <span class="tag t-green">保留现有</span></div>
+    <div class="sub">AI 按模板生成 3 个种子（一句话故事/钩子/核心冲突/差异化卖点/读者承诺）。</div>
+    <div class="mini">用户决策：选一个 / 换一批 / 自己改两句。</div>
+  </div></div>
+  <div class="step"><div class="rail"><div class="dot">3</div><div class="bar"></div></div><div class="body">
+    <div class="ttl">全书蓝图 <span class="tag t-orange">深化</span></div>
+    <div class="sub">在现有 Blueprint 基础上新增三个通用件——</div>
+    <div class="grid3">
+      <div class="box mini"><b>主线升级阶梯</b><br>2-4 级目标升级（如 活下去→站稳脚跟→守护所爱→撼动天下），每级对应大致卷位</div>
+      <div class="box mini"><b>副线注册</b><br>从通用槽位选 3-5 条副线，各写一句"这条线最终走向"</div>
+      <div class="box mini"><b>核心伏笔预设</b><br>3-5 个"大炸弹"：内容+伪装形态+计划引爆卷位</div>
+    </div>
+    <div class="mini">用户决策：三个件都给候选方案，可逐项点改。<b>这一步是整个"几百万字不崩"的根基</b>，但用户看到的只是三张卡片。</div>
+  </div></div>
+  <div class="step"><div class="rail"><div class="dot">4</div><div class="bar"></div></div><div class="body">
+    <div class="ttl">人物注册表 <span class="tag t-orange">深化</span></div>
+    <div class="sub">AI 按模板的"人物规模"生成初始阵容：主角三维成长坐标（能力/身份/心态的起点与终点）、重要配角的功能位与关系逆转预设、<b>中后期登场配额预留</b>（如"第 4 卷登场的宿命对手"先登记占位）。</div>
+    <div class="mini">取消 6 人上限；用户决策：逐个卡片"留/换/改"。</div>
+  </div></div>
+  <div class="step"><div class="rail"><div class="dot">5</div><div class="bar"></div></div><div class="body">
+    <div class="ttl">全书卷纲 <span class="tag t-pink">新增核心</span></div>
+    <div class="sub">按模板篇幅阶梯把主线升级阶梯落成 5-12 卷：<b>每卷一张卡</b>（阶段目标/核心冲突/舞台与势力/三增量/收束钩子/预计章数）。默认只<b>锁定前 2 卷细节</b>，后面卷是"粗锚点"——允许未来滚动修正。</div>
+    <div class="mini">用户决策：逐卷"确认/换方向/改一句"。此后写作中每完成一卷，走 §2.6 再规划简报刷新后续卷。</div>
+  </div></div>
+  <div class="step"><div class="rail"><div class="dot">6</div><div class="bar"></div></div><div class="body">
+    <div class="ttl">首卷细化与开写 <span class="tag t-orange">深化</span></div>
+    <div class="sub">第一卷展开为弧纲（5-10 个弧），前 1-2 个弧展开为章纲。进入连载期。</div>
+    <div class="mini">弧纲卡：起因/发展/高潮/收束/涉及伏笔与人物。用户可拖拽调整弧顺序、手动加弧。</div>
+  </div></div>
+</div>
+
+<h3>4.B 连载期：一个滚动循环（日常唯一要做的事）</h3>
+<div class="loop">
+  <div class="cap">章级循环（每天）　→　弧级循环（每周）　→　卷级循环（每 1-2 个月）</div>
+  <div class="flow" style="margin-top:10px">
+    <div class="step"><div class="rail"><div class="dot">A</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">章纲确认</div>
+      <div class="sub">系统按弧纲+创作简报（§2.6 的章级迷你版：前情摘要/临期伏笔/在场人物状态/本章钩子类型）生成章纲与 beats。<b>用户：确认 / 换一版 / 逐条改 beat / 写一句"本章我想看到…"</b></div>
+    </div></div>
+    <div class="step"><div class="rail"><div class="dot">B</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">生成与质检 <span class="tag t-green">保留现有</span></div>
+      <div class="sub">沿用现有 writer→humanizer→critic→编辑循环→九道质量门管线；Canon 事件层不变。<b>新增两个门</b>：钩子类型符合章纲分配；伏笔伪装未泄露。</div>
+    </div></div>
+    <div class="step"><div class="rail"><div class="dot">C</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">发布与记账</div>
+      <div class="sub">章节入 Canon；自动更新：人物状态快照、伏笔账本（埋设/推进/回收登记）、副线进度、节奏仪表盘。</div>
+    </div></div>
+    <div class="step"><div class="rail"><div class="dot">D</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">反馈回流 <span class="tag t-green">保留现有</span></div>
+      <div class="sub">读者团模拟评审（reader-panel）+ 用户一句话反馈（"这段太拖"），汇入下一章简报与卷末再规划。</div>
+    </div></div>
+    <div class="step"><div class="rail"><div class="dot">E</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">弧末/卷末再规划</div>
+      <div class="sub">弧末：校准本卷剩余弧。卷末：生成 §2.6 简报 → 推演下一卷 3 个方向 → 用户选定 → 展开弧纲。<b>用户随时可以中途插入意志</b>："下一卷我想让 XX 死"——系统评估连锁影响（哪些伏笔/副线/人物弧要跟着改）并给出改签方案。</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="note">“傻子模式”= 上述每个节点都有默认值，一路点"确认"也能产出结构合格的书；“符合心意”= 每个节点都留了"我要改"的口子，改动会被系统<b>传播</b>到受影响的大纲/伏笔/人物上，而不是改完就断。</div>
+
+<!-- ==================== 5. 流程二：衍生创作 ==================== -->
+<h2>5. 流程二 · 衍生流水线（仿写 / 续写 / 同人，四种模式一条主管线）</h2>
+<p class="lead">关键洞察：四种衍生模式 = <b>「拆书逆向工程」</b> + 对原创流水线的不同复用方式。现有 /import 拆书入口升级为一条正式的逆向管线。</p>
+
+<h3>5.A 公共前置：拆书逆向工程</h3>
+<div class="card">
+  <div class="flow">
+    <div class="step"><div class="rail"><div class="dot">1</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">导入原文（txt/epub）</div>
+      <div class="sub">分章、清洗、切分。</div>
+    </div></div>
+    <div class="step"><div class="rail"><div class="dot">2</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">结构逆向（分批读入，输出到同一套内核数据）</div>
+      <div class="grid2">
+        <div class="box mini"><b>结构层</b>：四级大纲重建（识别卷/弧边界）、主线升级阶梯、副线识别、伏笔账本（埋设/回收点）、人物注册表（登场/退场/关系逆转/状态轨迹）</div>
+        <div class="box mini"><b>风格层</b>：文风指纹（句式/视角/对话密度/信息释放）、节奏配比实测值、钩子配方实测值 → 自动生成一个<b>赛道模板包</b></div>
+      </div>
+      <div class="mini">产物全部落在 §2 的内核数据结构上——<b>原书变成一棵可浏览、可查询的大纲树 + 一个人物/伏笔数据库</b>。</div>
+    </div></div>
+    <div class="step"><div class="rail"><div class="dot">3</div><div class="bar"></div></div><div class="body">
+      <div class="ttl">拆书报告（给用户看的部分）</div>
+      <div class="sub">这本书的卷-弧地图、人物关系图、伏笔时间线、节奏曲线、文风要点。用户确认/修正逆向结果（AI 拆错了可以改，改的就是后续衍生的地基）。</div>
+    </div></div>
+  </div>
+</div>
+
+<h3>5.B 四种模式的分叉</h3>
+<div class="grid2">
+  <div class="lane"><b>模式① 仿写</b>（学其神，写我书）<br>
+    <span class="small">取：<b>模板包 + 结构骨架</b>（卷数/节奏/钩子配方/爽点引擎）。<br>换：世界观、人物、主线全部重新生成。<br>流程：带着逆向出的模板包进入 <b>§4 原创流水线第 2 步</b>（种子阶段即按仿写对象的"爽点公式"出题）。<br>例：学《鬼吹灯》的"悬疑堆叠+过渡章呼吸法"写一部全新探险文。</span></div>
+  <div class="lane b"><b>模式② 续写</b>（接其尾，往下写）<br>
+    <span class="small">取：<b>全部 Canon</b>（人物/伏笔/状态账本）+ 模板包。<br>换：从终点生成"下一卷卷纲"——本质就是跑一次 <b>§2.6 卷末再规划</b>，只是简报来自原书终点。<br>关键校验：未回收伏笔必须交代去向（续写回收或显式废弃）；文风指纹注入生成节点。<br>例：从《雪中》拒北城之后续写新卷。</span></div>
+  <div class="lane c"><b>模式③ 仿写同人</b>（借其人其世，讲新故事）<br>
+    <span class="small">取：<b>人物注册表 + 世界观设定</b>。<br>换：主线/副线/卷纲全部重走 <b>§4 规划期第 3-5 步</b>。<br>关键约束：人物"隐藏秘密"和性格标签锁定为不可违反的 Canon；系统逐章校验 OOC（人物崩坏检测门）。<br>例：用《全职高手》的人物写一部全新架空赛事故事。</span></div>
+  <div class="lane d"><b>模式④ 续写同人</b>（接其人其世，接尾续讲）<br>
+    <span class="small">= ②+③ 的叠加：人物/世界观/终点状态全继承，主线可部分改向（"假如 XX 没死"）。<br>特有一个交互：<b>分歧点声明</b>——用户选定从原书哪一章/哪个事件开始分叉，系统把该点之后的原书 Canon 标记为"平行世界"，之前的保留为共同地基。</span></div>
+</div>
+
+<div class="note">衍生模式的版权红线：系统面向个人学习/非商业用途，发布功能在衍生项目上默认关闭并加水印声明——这是产品设计必须提前想好的边界。</div>
+
+<!-- ==================== 6. 篇幅自适应 ==================== -->
+<h2>6. 篇幅自适应（30 万字与 600 万字同一流程）</h2>
+<div class="card">
+  <table>
+    <tr><th>目标字数</th><th>卷数</th><th>卷章数</th><th>弧/卷</th><th>重要人物</th><th>核心伏笔</th><th>大高潮间隔</th><th>规划策略</th></tr>
+    <tr><td>≤ 30 万</td><td>2-3</td><td>30-50</td><td>3-5</td><td>10-20</td><td>2-3</td><td>15-25 章</td><td>全书一次规划到位，可弱化卷末再规划</td></tr>
+    <tr><td>80-150 万</td><td>4-6</td><td>50-80</td><td>5-8</td><td>30-60</td><td>4-6</td><td>20-30 章</td><td>锁前 2 卷，滚动规划</td></tr>
+    <tr><td>300 万+</td><td>6-9</td><td>80-150</td><td>6-10</td><td>80-150</td><td>6-10</td><td>30-50 章</td><td>只锁前 1-2 卷细节，主线升级阶梯必填，中后期登场配额必填</td></tr>
+  </table>
+  <p class="mini">这张表就是"之前只能写 30 万字"的解法：不是流程不同，而是<b>参数不同</b>。用户选目标字数的瞬间，模板包+篇幅阶梯就决定了默认值。</p>
+</div>
+
+<!-- ==================== 7. 现有资产映射 ==================== -->
+<h2>7. 与现有系统的映射（保留 / 改造 / 新增）</h2>
+<div class="card">
+  <table>
+    <tr><th>决策</th><th>内容</th></tr>
+    <tr><td><span class="tag t-green">保留</span></td>
+      <td>向导式骨架（定位→赛道→种子→蓝图→人物→首卷）；市场赛道匹配 /market；九道质量门管线；Canon 不可变修订+事件溯源；章纲 beat sheet 结构；读者团模拟反馈；SSE 任务流；导入作品入口（升级为正式逆向管线）</td></tr>
+    <tr><td><span class="tag t-orange">改造</span></td>
+      <td>worldbuilder：单卷落库 → 多卷四级树（后端 Outline/NovelToc 模型已支持，只需真正建树）；Blueprint：+主线升级阶梯/副线注册/核心伏笔预设；人物模块：6 人上限 → 注册表（静态+动态字段+登场调度）；伏笔模块：接通已有的 target_chapter/importance/escalation 字段到章纲注入；大纲 UI：平铺只读 JSON → 四级树（浏览+点改+拖拽）；工作台：左栏平铺章节 → 卷-弧-章树；设定页：只读 → 可编辑（后端 PUT /bible 已存在）</td></tr>
+    <tr><td><span class="tag t-pink">新增</span></td>
+      <td>赛道模板包体系（数据结构+预置模板+拆书逆向生成）；卷末再规划引擎（简报生成+下一卷推演 API）；章末钩子引擎+节奏仪表盘；副线注册与超期提醒；人物 OOC 检测门；拆书逆向管线（结构+风格）；衍生模式的分歧点管理</td></tr>
+  </table>
+</div>
+
+<!-- ==================== 8. 前端页面变化 ==================== -->
+<h2>8. 前端页面地图（改完后）</h2>
+<div class="grid2">
+  <div class="card"><h4>/create 向导（6 步，§4.A）</h4><p class="mini">保留骨架，第 3/4/5 步换为 蓝图三件套 / 人物注册表 / 全书卷纲树。每步仍是"候选卡片+点改"。</p></div>
+  <div class="card"><h4>/workspace 工作台</h4><p class="mini">左栏：卷-弧-章树（卷进度+弧状态色块）；中栏：编辑器；右栏：章纲 / 创作简报（临期伏笔+在场人物状态+副线提醒）/ 质检 / 读者反馈。</p></div>
+  <div class="card"><h4>/outline 大纲页 <span class="tag t-pink">新</span></h4><p class="mini">四级树全貌：主线升级阶梯泳道 + 卷-弧网格；点击任意卷可"再规划此卷"；弧可拖拽。</p></div>
+  <div class="card"><h4>/characters 人物页 <span class="tag t-pink">新</span></h4><p class="mini">注册表：筛选（阵营/功能位/存活）、登场时间线、关系逆转记录、每人当前状态卡。</p></div>
+  <div class="card"><h4>/foreshadowing 伏笔看板 <span class="tag t-pink">新</span></h4><p class="mini">按重要度分栏，临期高亮；每条显示埋设章→回收窗口进度条；"本卷炸弹清单"。</p></div>
+  <div class="card"><h4>/import 衍生页</h4><p class="mini">导入→逆向进度→拆书报告（卷弧地图/人物图/伏笔时间线/节奏曲线）→选四种模式之一开书。</p></div>
+</div>
+
+<h2>9. 待你拍板的开放问题</h2>
+<div class="card">
+  <ul class="tight">
+    <li>① 卷纲的默认锁定深度：只锁前 2 卷（推荐，符合滚动规律）还是全书锁死（更稳但失真）？</li>
+    <li>② "傻子模式"的默认授权级别：全自动连载（只验收成稿）/ 章纲确认制（推荐）/ 逐 beat 确认制？</li>
+    <li>③ 拆书逆向的规模上限：500 万字级原书逆向要分批多轮调用，成本与时长可接受吗？先做 ≤150 万字？</li>
+    <li>④ 衍生模式的发布边界：是否同意"衍生项目默认禁发布"的产品策略？</li>
+    <li>⑤ 节奏仪表盘先做成"提示"还是"强制干预"（自动插入缓冲章建议）？</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>

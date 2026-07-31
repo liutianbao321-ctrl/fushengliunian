@@ -1,0 +1,26 @@
+[Unit]
+Description=Fushengliunian Next.js Web
+After=network-online.target fushengliunian.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/fushengliunian/frontend/.next/standalone
+Environment=NODE_ENV=production
+Environment=HOSTNAME=127.0.0.1
+Environment=PORT=3000
+Environment=NODE_OPTIONS=--max-old-space-size=160
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGTERM
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+MemoryHigh=220M
+MemoryMax=300M
+
+[Install]
+WantedBy=multi-user.target

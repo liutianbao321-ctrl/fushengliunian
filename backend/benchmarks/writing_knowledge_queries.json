@@ -1,0 +1,17 @@
+[
+  {"category": "人物", "query": "怎样让人物的选择显得可信而不是作者强推", "expected_tags": ["人物"], "expected_terms": ["欲望", "动机", "选择"]},
+  {"category": "人物", "query": "人物设定如何转化成压力下的具体行动", "expected_tags": ["人物"], "expected_terms": ["性格", "冲突", "行动"]},
+  {"category": "人物", "query": "配角怎样避免只有标签没有自己的目标", "expected_tags": ["人物"], "expected_terms": ["配角", "目标", "欲望"]},
+  {"category": "对话", "query": "如何写出双方都隐瞒目的的对话", "expected_tags": ["对话", "对白"], "expected_terms": ["潜台词", "目的", "对白"]},
+  {"category": "对话", "query": "怎样避免人物轮流解释背景信息", "expected_tags": ["对话", "对白"], "expected_terms": ["信息", "对话", "对白"]},
+  {"category": "对话", "query": "对话如何同时改变关系和推进局势", "expected_tags": ["对话", "对白"], "expected_terms": ["关系", "冲突", "推进"]},
+  {"category": "节奏", "query": "一章中哪些地方应该放慢详细写", "expected_tags": ["节奏"], "expected_terms": ["详略", "节奏", "高潮"]},
+  {"category": "节奏", "query": "怎样判断一个场景可以删除或压缩", "expected_tags": ["节奏", "情节"], "expected_terms": ["场景", "删除", "情节"]},
+  {"category": "节奏", "query": "冲突升级时如何安排张弛变化", "expected_tags": ["节奏", "情节"], "expected_terms": ["冲突", "张弛", "节奏"]},
+  {"category": "伏笔", "query": "伏笔从埋设到回收应该记录哪些信息", "expected_tags": ["伏笔"], "expected_terms": ["埋伏", "回收", "伏笔"]},
+  {"category": "伏笔", "query": "怎样提醒旧伏笔又不让读者觉得刻意", "expected_tags": ["伏笔"], "expected_terms": ["暗示", "提醒", "伏笔"]},
+  {"category": "伏笔", "query": "一个伏笔怎样同时服务人物和情节", "expected_tags": ["伏笔", "人物", "情节"], "expected_terms": ["伏笔", "人物", "情节"]},
+  {"category": "大纲", "query": "长篇小说为什么要分全书卷和章节规划", "expected_tags": ["大纲"], "expected_terms": ["大纲", "卷", "章节"]},
+  {"category": "大纲", "query": "章纲怎样写到可以直接展开成场景", "expected_tags": ["大纲", "情节"], "expected_terms": ["场景", "章纲", "冲突"]},
+  {"category": "大纲", "query": "长篇连载如何滚动规划又不锁死后续", "expected_tags": ["大纲"], "expected_terms": ["规划", "调整", "大纲"]}
+]

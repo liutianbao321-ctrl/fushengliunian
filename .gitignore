@@ -1,0 +1,25 @@
+backend/.env
+.workbuddy/
+# DeerFlow 已移除；忽略本机遗留目录，避免旧 .env/日志被重新纳入版本库。
+backend/deerflow/
+
+# Runtime state and deployment output
+deploy/runtime/
+backend/logs/
+frontend/logs/
+backend/.venv/
+frontend/node_modules/
+frontend/.next/
+frontend/.next.old/
+frontend/.env.local
+frontend/tsconfig.tsbuildinfo
+deploy/.env
+
+# Local build and test artifacts
+.DS_Store
+**/.DS_Store
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.ruff_cache/
+*.log
